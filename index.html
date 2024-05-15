@@ -1,1 +1,338 @@
-index
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday Tisha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+    <link href="./src/output.css" rel="stylesheet" />
+  </head>
+  <body>
+    <svg preserveAspectRatio="xMidYMid slice" viewBox="10 10 80 80">
+      <defs>
+        <style>
+          @keyframes rotate {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+          .out-top {
+            animation: rotate 20s linear infinite;
+            transform-origin: 13px 25px;
+          }
+          .in-top {
+            animation: rotate 10s linear infinite;
+            transform-origin: 13px 25px;
+          }
+          .out-bottom {
+            animation: rotate 25s linear infinite;
+            transform-origin: 84px 93px;
+          }
+          .in-bottom {
+            animation: rotate 15s linear infinite;
+            transform-origin: 84px 93px;
+          }
+        </style>
+      </defs>
+      <path
+        fill="#9b5de5"
+        class="out-top"
+        d="M37-5C25.1-14.7,5.7-19.1-9.2-10-28.5,1.8-32.7,31.1-19.8,49c15.5,21.5,52.6,22,67.2,2.3C59.4,35,53.7,8.5,37-5Z"
+      />
+      <path
+        fill="#f15bb5"
+        class="in-top"
+        d="M20.6,4.1C11.6,1.5-1.9,2.5-8,11.2-16.3,23.1-8.2,45.6,7.4,50S42.1,38.9,41,24.5C40.2,14.1,29.4,6.6,20.6,4.1Z"
+      />
+      <path
+        fill="#00bbf9"
+        class="out-bottom"
+        d="M105.9,48.6c-12.4-8.2-29.3-4.8-39.4.8-23.4,12.8-37.7,51.9-19.1,74.1s63.9,15.3,76-5.6c7.6-13.3,1.8-31.1-2.3-43.8C117.6,63.3,114.7,54.3,105.9,48.6Z"
+      />
+      <path
+        fill="#00f5d4"
+        class="in-bottom"
+        d="M102,67.1c-9.6-6.1-22-3.1-29.5,2-15.4,10.7-19.6,37.5-7.6,47.8s35.9,3.9,44.5-12.5C115.5,92.6,113.9,74.6,102,67.1Z"
+      />
+    </svg>
+    <canvas id="canvas"></canvas>
+    <!-- <div class="dialog-birthday_message">
+      <div id="birthday_container" class="birthday_container">
+        <canvas
+          id="canvas_confetti"
+          width="600px"
+          height="400px"
+          class="bg-transparent"
+        ></canvas>
+      </div>
+    </div> -->
+
+    <h1 class="text-xl uppercase pt-10 font-extrabold px-4 typewriter-text">
+      🥳
+      <span id="birthday-heading" class="drop-shadow-color"
+        >Happy Birthday</span
+      >
+      Tisha 🥳
+    </h1>
+
+    <div
+      class="rounded-lg md:h-max md:flex md:justify-center md:gap-5 md:pt-20"
+    >
+      <img
+        src="./photo-1.png"
+        alt=""
+        class="object-cover w-full h-full text-center px-10 py-10 rounded-[30px] animate-fade-in-out md:w-[20rem] md:h-[20rem] md:py-0 md:px-0"
+      />
+      <img
+        src="./photo-2.png"
+        alt=""
+        class="object-cover w-full h-full text-center px-10 py-10 rounded-[30px] animate-fade-in-out md:w-[20rem] md:h-[20rem] md:py-0 md:px-0"
+      />
+      <img
+        src="./photo-3.jpg"
+        alt=""
+        class="object-cover w-full h-full text-center px-10 py-10 rounded-[30px] animate-fade-in-out md:w-[20rem] md:h-[20rem] md:py-0 md:px-0"
+      />
+    </div>
+
+    <h2 class="pt-5 pb-5 font-semibold text-xs md:text-xl">
+      Tenang iki gambar e ambil dari ig kok bukan prbadi hehehe
+    </h2>
+
+    <div class="flex justify-center">
+      <img
+        src="https://source.unsplash.com/360x200?cake+birthday"
+        alt="cake"
+        class="object-cover w-full h-full text-center px-10 py-10 rounded-[30px] animate-fade-in-out md:w-[50rem] md:h-[20rem] md:py-0 md:px-0"
+      />
+    </div>
+
+    <p class="text-xs pb-5 pt-5 md:text-xl font-semibold">
+      iki asline gambar kue ulang tahun tapi muncul e random teko web , sepurane
+      lek moro gambar e gak pas. <br />
+      loh gak sadar ta lek berubah? coba refresh en
+    </p>
+
+    <p class="text-xs md:text-xl font-semibold pb-6">
+      Sepurane WA e gurung tak baca , rodok badmood wingi , ahihihi duarr. ya
+      begitulah
+    </p>
+
+    <div class="bg-slate-200 mx-2 md:mx-20 p-2 rounded-lg shadow-2xl">
+      <h3 class="font-bold md:text-lg">Quotes Tisha</h3>
+      <p class="md:text-lg font-semibold">
+        "Semakin nambah umur , semakin cepet mati ~ Tisha 2020"
+      </p>
+    </div>
+
+    <p class="md:text-lg text-xs font-semibold pt-10 pb-10">
+      lek di iling iling lucu juga sih,wkwkwk, sayang ae chat e ilang wes an,
+      wkwkwk
+    </p>
+
+    <div class="bg-slate-200 mx-2 md:mx-20 p-2 rounded-lg shadow-2xl mb-10">
+      <h3 class="font-bold md:text-lg">Sedikit pantun dari saya</h3>
+      <p class="md:text-lg font-semibold text-xs">
+        surya datang begitu indahnnya <br />
+        datang ketika pagi hari <br />
+        semoga betambahnnya umur juga nambah rejekinnya <br />
+        dan tisha sekeluarga bisa cepat umrah dan haji
+      </p>
+    </div>
+
+    <hr />
+
+    <div class="pt-10 pb-10 flex flex-col items-center justify-center">
+      <img
+        src="./photo-4.jpg"
+        alt=""
+        class="object-cover w-full h-full text-center px-10 py-10 rounded-[30px] animate-fade-in-out md:w-[20rem] md:h-[20rem] md:py-0 md:px-0"
+      />
+      <p class="pt-10">Rifki Ilham Lutfika (arek rodok gatel ancen aowkoawk)</p>
+    </div>
+    <p class="md:text-lg text-xs font-semibold pb-10">
+      Iku arek e seng coding<br />
+      lek gawe raine seng saiki rodok isin jerawaten soale hehehe
+    </p>
+
+    <div
+      class="mx-2 md:mx-20 bg-slate-600 text-white p-10 mb-20 rounded-lg text-lg"
+    >
+      iki kontak e arek e seng coding
+      <a
+        href="https://wa.me/+6285159722546"
+        class="hover:text-blue-700 text-blue-300"
+        >klik disini</a
+      >
+    </div>
+
+    <p class="md:text-lg text-xs font-semibold pb-10 px-2">
+      sekali lagi selamat ulang tahun ya, sepurane wingi jare ibu ku kamu ambek
+      Tita neng toko hehehe, <br />
+      lek golek i aku isok langsung neng toko, tapi lek pas gak nen toko biasane
+      arek e ndek omah maem siang lek gak sholat luhur utawa sholat ashar <br />
+      utawa lek pas magrib nang masjid o tis biasane aku magrib an ndek masjid
+    </p>
+
+    <p class="text-sm font-semibold md:text-sm pb-10">
+      "engko lek wes ndek malay ojok lali aku ya hehehe , Bek e ilmu e iso nular
+      neng aku pisan hehehe , sukses selalu tis 🤗"
+    </p>
+
+    <script>
+      // JavaScript untuk mengamati masing-masing gambar
+      // ketika mereka memasuki atau keluar dari viewport.
+      document.addEventListener("DOMContentLoaded", function () {
+        var images = document.querySelectorAll(".animate-fade-in-out");
+        var options = {
+          threshold: 0.5, // Treshold 50% untuk masuk ke dalam viewport
+        };
+        var observer = new IntersectionObserver(function (entries, observer) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in-viewport");
+              entry.target.classList.remove("out-viewport");
+            } else {
+              entry.target.classList.add("out-viewport");
+              entry.target.classList.remove("in-viewport");
+            }
+          });
+        }, options);
+        images.forEach(function (image) {
+          observer.observe(image);
+        });
+      });
+
+      let W = window.innerWidth;
+      let H = window.innerHeight;
+      const canvas = document.getElementById("canvas");
+      const context = canvas.getContext("2d");
+      const maxConfettis = 20;
+      const particles = [];
+
+      const possibleColors = [
+        "DodgerBlue",
+        "OliveDrab",
+        "Gold",
+        "Pink",
+        "SlateBlue",
+        "LightBlue",
+        "Gold",
+        "Violet",
+        "PaleGreen",
+        "SteelBlue",
+        "SandyBrown",
+        "Chocolate",
+        "Crimson",
+      ];
+
+      function randomFromTo(from, to) {
+        return Math.floor(Math.random() * (to - from + 1) + from);
+      }
+
+      function confettiParticle() {
+        this.x = Math.random() * W; // x
+        this.y = Math.random() * H - H; // y
+        this.r = randomFromTo(11, 33); // radius
+        this.d = Math.random() * maxConfettis + 11;
+        this.color =
+          possibleColors[Math.floor(Math.random() * possibleColors.length)];
+        this.tilt = Math.floor(Math.random() * 33) - 11;
+        this.tiltAngleIncremental = Math.random() * 0.07 + 0.05;
+        this.tiltAngle = 0;
+
+        this.draw = function () {
+          context.beginPath();
+          context.lineWidth = this.r / 2;
+          context.strokeStyle = this.color;
+          context.moveTo(this.x + this.tilt + this.r / 3, this.y);
+          context.lineTo(this.x + this.tilt, this.y + this.tilt + this.r / 5);
+          return context.stroke();
+        };
+      }
+
+      function Draw() {
+        const results = [];
+
+        // Magical recursive functional love
+        requestAnimationFrame(Draw);
+
+        context.clearRect(0, 0, W, window.innerHeight);
+
+        for (var i = 0; i < maxConfettis; i++) {
+          results.push(particles[i].draw());
+        }
+
+        let particle = {};
+        let remainingFlakes = 0;
+        for (var i = 0; i < maxConfettis; i++) {
+          particle = particles[i];
+
+          particle.tiltAngle += particle.tiltAngleIncremental;
+          particle.y += (Math.cos(particle.d) + 3 + particle.r / 2) / 2;
+          particle.tilt = Math.sin(particle.tiltAngle - i / 3) * 15;
+
+          if (particle.y <= H) remainingFlakes++;
+
+          // If a confetti has fluttered out of view,
+          // bring it back to above the viewport and let if re-fall.
+          if (particle.x > W + 30 || particle.x < -30 || particle.y > H) {
+            particle.x = Math.random() * W;
+            particle.y = -30;
+            particle.tilt = Math.floor(Math.random() * 10) - 20;
+          }
+        }
+
+        return results;
+      }
+
+      window.addEventListener(
+        "resize",
+        function () {
+          W = window.innerWidth;
+          H = window.innerHeight;
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        },
+        false
+      );
+
+      // Push new confetti objects to `particles[]`
+      for (var i = 0; i < maxConfettis; i++) {
+        particles.push(new confettiParticle());
+      }
+
+      // Initialize
+      canvas.width = W;
+      canvas.height = H;
+      Draw();
+
+      const heading = document.getElementById("birthday-heading");
+
+      // Fungsi untuk menghasilkan warna acak dalam format RGB
+      function randomColor() {
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+        return `rgb(${r},${g},${b})`;
+      }
+
+      // Fungsi untuk mengubah warna teks secara periodik
+      function changeColor() {
+        heading.style.color = randomColor();
+      }
+
+      // Ubah warna teks setiap 1 detik
+      setInterval(changeColor, 1000);
+    </script>
+  </body>
+</html>

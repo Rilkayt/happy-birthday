@@ -1,0 +1,141 @@
+body {
+  background-color: #fee440;
+  text-align: center;
+}
+
+svg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+}
+
+canvas {
+  overflow-y: hidden;
+  overflow-x: hidden;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  position: fixed;
+  z-index: -1;
+}
+
+.typewriter {
+  position: relative;
+  overflow: hidden;
+  border-right: 0.15em solid orange; /* caret */
+  white-space: nowrap;
+  margin: 0 auto;
+}
+
+.typewriter-text {
+  display: inline-block;
+  animation: typing 3s steps(30, end), blink-caret 0.5s step-end infinite;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0 auto;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: orange;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-fade-in-out {
+  animation: fade-out 0.5s forwards;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-fade-in-out.in-viewport {
+    animation: fade-in 2s forwards;
+  }
+
+  .animate-fade-in-out.out-viewport {
+    animation: fade-out 0.5s forwards;
+  }
+}
+
+.container {
+  position: relative;
+}
+
+.text {
+  font-size: 36px;
+  color: #fff;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #e91e63;
+  border-radius: 10px;
+  animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+.confetti {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-image: url("confetti.png"); /* Ganti dengan URL gambar kertas berjatuhan */
+  background-size: cover;
+}
+
+/* Warna-warni untuk confetti */
+.confetti:nth-child(1) {
+  top: -50px;
+  left: 10%;
+  animation: confetti1 3s linear infinite;
+}
+
+.confetti:nth-child(2) {
+  top: -50px;
+  left: 20%;
+  animation: confetti2 3s linear infinite;
+}
+
+.drop-shadow-color {
+  filter: drop-shadow(
+    0 0px 4px rgba(250, 248, 248, 0.849)
+  ); /* Warna merah dengan opacity 0.5 */
+}
