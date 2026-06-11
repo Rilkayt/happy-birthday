@@ -3,325 +3,1731 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Selamat Ulang Tahun!</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <title>The Delayed Memory Capsule</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
-      .fade-in {
-        opacity: 0;
-        transition: opacity 1.5s ease;
+      /* ================= NATIVE CSS VARIABLES & RESET ================= */
+      :root {
+        --bg-dark: #0f172a;
+        --bg-card: rgba(30, 41, 59, 0.5);
+        --border-color: #334155;
+        --primary-glow: #6366f1;
+        --secondary-glow: #a855f7;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --accent-amber: #fbbf24;
       }
-      .fade-in.show {
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Mengunci scroll di awal secara default lewat class no-scroll */
+      body.no-scroll {
+        overflow: hidden !important;
+        height: 100vh;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: var(--bg-dark);
+        background-image: radial-gradient(
+            at 0% 0%,
+            #1e293b 0px,
+            transparent 50%
+          ),
+          radial-gradient(at 100% 0%, #3a3068 0px, transparent 50%);
+        background-attachment: fixed;
+        color: var(--text-main);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.5;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ================= UTILITY ANIMATIONS ================= */
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20%,
+        60% {
+          transform: translateX(-6px);
+        }
+        40%,
+        80% {
+          transform: translateX(6px);
+        }
+      }
+      .animate-shake {
+        animation: shake 0.3s ease-in-out;
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translateY(30px);
+          opacity: 0;
+        }
+        100% {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes boxPop {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .box-tap {
+        animation: boxPop 0.2s ease-in-out;
+      }
+
+      /* ================= ULTRA-SMOOTH INFINITE MARQUEE ANIMATIONS ================= */
+      @keyframes marqueeLeft {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-33.3333%);
+        } /* Loop akurat setelah porsi grup pertama lewat */
+      }
+
+      @keyframes marqueeRight {
+        0% {
+          transform: translateX(-33.3333%);
+        }
+        100% {
+          transform: translateX(0);
+        }
+      }
+
+      /* ================= SCREENS SETUP ================= */
+      #gateScreen,
+      #pandoraScreen {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 24px;
+        text-align: center;
+        transition: all 0.5s ease;
+      }
+
+      .lock-container {
+        max-w: 400px;
+        width: 100%;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        padding: 32px;
+        border-radius: 16px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
+
+      .badge-delayed {
+        display: inline-block;
+        background: rgba(251, 191, 36, 0.1);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        color: var(--accent-amber);
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 9999px;
+        margin-bottom: 16px;
+        font-weight: 500;
+      }
+
+      .title-gradient {
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        background: linear-gradient(to right, #818cf8, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+      }
+
+      .desc-text {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+
+      .input-password {
+        width: 100%;
+        padding: 12px 16px;
+        background: #090d16;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        color: var(--text-main);
+        text-align: center;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.3s ease;
+        margin-bottom: 12px;
+      }
+      .input-password:focus {
+        border-color: var(--primary-glow);
+      }
+
+      .btn-primary {
+        width: 100%;
+        padding: 12px 16px;
+        background: linear-gradient(to right, #6366f1, #a855f7);
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        transition: transform 0.1s ease;
+      }
+      .btn-primary:active {
+        transform: scale(0.98);
+      }
+      .error-message {
+        color: #f87171;
+        font-size: 12px;
+        margin-top: 8px;
+      }
+
+      /* ================= PANDORA BOX STYLE ================= */
+      .pandora-box-container {
+        cursor: pointer;
+        font-size: 80px;
+        margin: 30px auto;
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s ease;
+        user-select: none;
+      }
+
+      .wish-bubble {
+        background: linear-gradient(to right, #1e1b4b, #311042);
+        border: 1px solid var(--secondary-glow);
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        color: #e9d5ff;
+        margin-top: 20px;
+        box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+        animation: floatUp 0.4s ease-out;
+      }
+
+      .click-counter {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 10px;
+        font-family: monospace;
+      }
+
+      /* ================= CINEMATIC INTRO SECTIONS ================= */
+      .intro-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-dark);
+        z-index: 999;
+        padding: 30px;
+      }
+
+      .intro-text {
+        font-size: 24px;
+        font-weight: 200;
+        letter-spacing: 2px;
+        color: #e2e8f0;
+        text-align: center;
+        max-w: 600px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 1s ease, transform 1s ease;
+      }
+
+      @media (min-width: 768px) {
+        .intro-text {
+          font-size: 32px;
+        }
+      }
+
+      .intro-text.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ================= MAIN CONTENT STYLE ================= */
+      main {
+        width: 100%;
+        margin: 0 auto;
+        padding-bottom: 80px;
+      }
+
+      .header-estetik {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        text-align: center;
+        padding: 20px;
+      }
+
+      @keyframes textShine {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .header-estetik h2 {
+        font-size: 44px;
+        font-weight: 900;
+        letter-spacing: -2px;
+        line-height: 1.2;
+        background: linear-gradient(
+          110deg,
+          #818cf8 20%,
+          #f472b6 40%,
+          #ffffff 50%,
+          #f472b6 60%,
+          #c084fc 80%
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+        animation: textShine 4s linear infinite;
+        opacity: 0;
+        transform: scale(0.95);
+        transition: opacity 1.5s ease, transform 1.5s ease;
+      }
+
+      .header-estetik h2.reveal {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .header-estetik p {
+        opacity: 0;
+        transition: opacity 1.5s ease 0.5s;
+      }
+      .header-estetik p.reveal {
         opacity: 1;
       }
 
-      .progress-container {
-        height: 5000vh;
-        position: relative;
-        background: linear-gradient(to bottom, #fdf2f8, #f5d0fe);
+      @media (min-width: 768px) {
+        .header-estetik h2 {
+          font-size: 76px;
+        }
       }
 
-      .progress-bar-wrapper {
-        position: sticky;
-        top: 40%;
+      .scroll-indicator {
+        margin-top: 50px;
+        font-size: 12px;
+        color: var(--text-muted);
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        animation: bounce 2s infinite;
+        opacity: 0;
+        transition: opacity 1s ease 1.2s;
+      }
+
+      .scroll-indicator.reveal {
+        opacity: 1;
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px);
+        }
+        60% {
+          transform: translateY(-5px);
+        }
+      }
+
+      .main-section {
+        max-w: 1000px;
+        margin: 0 auto 80px auto;
+        padding: 0 20px;
+      }
+
+      .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        border-left: 4px solid var(--primary-glow);
+        padding-left: 12px;
+        margin-bottom: 32px;
+      }
+      .section-title.purple {
+        border-left-color: var(--secondary-glow);
+      }
+
+      /* ================= FIX CAROUSEL MARQUEE (NO BLANK SPACE) ================= */
+      .marquee-container {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+        margin-bottom: 120px;
+        padding: 16px 0;
+      }
+
+      .marquee-wrapper {
+        display: flex;
+        width: max-content; /* Memastikan lebar otomatis mengikuti isi gabungan grup */
+        will-change: transform;
+      }
+
+      /* Kecepatan disesuaikan agar smooth merata */
+      .track-left {
+        animation: marqueeLeft 35s linear infinite;
+      }
+      .track-right {
+        animation: marqueeRight 35s linear infinite;
+      }
+
+      .marquee-wrapper:hover {
+        animation-play-state: paused;
+      }
+
+      .marquee-group {
+        display: flex;
+        gap: 24px;
+        padding-right: 24px; /* Memberi jarak konsisten antar perulangan grup */
+      }
+
+      .marquee-item {
+        width: 310px; /* Ukuran statis ideal untuk desktop & mobile */
+        background: #131c2e;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        transition: border-color 0.4s ease, transform 0.4s ease,
+          background-color 0.4s ease;
+        flex-shrink: 0; /* Mencegah card mengkerut/gepeng di layar HP */
+      }
+
+      .marquee-item:hover {
+        border-color: var(--primary-glow);
+        background: #1e293b;
+        transform: translateY(-6px);
+      }
+
+      .marquee-img {
         width: 100%;
+        height: 190px;
+        object-fit: cover;
+        filter: grayscale(100%) brightness(65%);
+        transition: filter 0.5s ease, transform 0.5s ease;
+      }
+
+      .marquee-item:hover .marquee-img {
+        filter: grayscale(0%) brightness(100%);
+        transform: scale(1.03);
+      }
+
+      .marquee-body {
+        padding: 20px;
+      }
+      .marquee-body h4 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        transition: color 0.3s;
+      }
+      .marquee-item:hover .marquee-body h4 {
+        color: #818cf8;
+      }
+      .marquee-body p {
+        color: var(--text-muted);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      /* ================= RETRO MINI GAME STYLE ================= */
+      .game-wrapper {
+        background: rgba(15, 23, 42, 0.6);
+        border: 2px dashed var(--border-color);
+        border-radius: 24px;
+        padding: 40px 20px;
+        text-align: center;
+        max-w: 700px;
+        margin: 0 auto;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .btn-game-trigger {
+        padding: 16px 32px;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        border: 1px solid #60a5fa;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        border-radius: 14px;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(29, 78, 216, 0.4);
+        transition: all 0.2s ease;
+      }
+
+      .btn-game-trigger:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(29, 78, 216, 0.6);
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+      }
+
+      .game-container {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        height: 380px;
+        background: #020617;
+        border: 3px solid #1e293b;
+        border-radius: 16px;
+        margin: 20px auto 0 auto;
+        overflow: hidden;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+      }
+
+      .boss-ui {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        z-index: 10;
+      }
+      .boss-name {
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #f87171;
+        margin-bottom: 4px;
+        text-shadow: 0 0 8px rgba(248, 113, 113, 0.6);
+      }
+      .hp-bar-bg {
+        width: 100%;
+        height: 8px;
+        background: #334155;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .hp-bar-fill {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, #ef4444, #f87171);
+        box-shadow: 0 0 8px #ef4444;
+        transition: width 0.1s ease;
+      }
+
+      .game-actor {
+        position: absolute;
+        user-select: none;
+        transition: transform 0.05s linear;
+      }
+      #enemyBoss {
+        font-size: 36px;
+        width: 40px;
+        height: 40px;
+        top: 40px;
+        left: 230px;
+        text-align: center;
+        line-height: 40px;
+        filter: drop-shadow(0 0 10px #ef4444);
+      }
+      #playerShip {
+        font-size: 32px;
+        width: 40px;
+        height: 40px;
+        bottom: 20px;
+        left: 230px;
+        text-align: center;
+        line-height: 40px;
+        filter: drop-shadow(0 0 10px #3b82f6);
+      }
+      .laser-beam {
+        position: absolute;
+        width: 4px;
+        height: 14px;
+        background: #60a5fa;
+        box-shadow: 0 0 8px #3b82f6;
+        border-radius: 999px;
+      }
+
+      .game-controls {
         display: flex;
         justify-content: center;
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .btn-ctrl {
+        padding: 10px 20px;
+        background: #1e293b;
+        border: 1px solid var(--border-color);
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        user-select: none;
+      }
+      .btn-ctrl:active {
+        background: #334155;
+      }
+
+      .game-over-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.85);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+        z-index: 20;
+      }
+
+      /* ================= BANTER CHAT STYLE ================= */
+      .banter-section {
+        max-w: 650px;
+        margin: 60px auto 40px auto;
+        background: rgba(30, 41, 59, 0.3);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        padding: 32px 24px;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(8px);
+      }
+
+      .banter-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
         align-items: center;
       }
 
-      .progress-bar {
-        width: 80%;
-        height: 20px;
-        background-color: rgba(255, 255, 255, 1);
-        border-radius: 9999px;
-        overflow: hidden;
-        position: relative;
-        z-index: 10;
+      .banter-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        justify-content: center;
       }
 
-      .progress-bar-fill {
-        height: 100%;
-        background-color: white;
-        width: 0%;
-        transition: width 0.2s linear;
-        border-radius: 9999px;
+      .banter-row.left {
+        justify-content: flex-start;
+      }
+      .banter-row.right {
+        justify-content: flex-end;
+        flex-direction: row-reverse;
       }
 
-      .progress-label {
-        width: max-content;
-        position: absolute;
-        margin-top: 40px;
-        color: white;
+      .banter-avatar {
+        font-size: 32px;
+        user-select: none;
+        background: rgba(255, 255, 255, 0.05);
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 1px solid var(--border-color);
+        flex-shrink: 0;
+      }
+
+      .banter-bubble {
+        max-w: 75%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        text-align: left;
+      }
+
+      .banter-row.left .banter-bubble {
+        background: #1e293b;
+        color: #f1f5f9;
+        border: 1px solid var(--border-color);
+        border-top-left-radius: 4px;
+      }
+
+      .banter-row.right .banter-bubble {
+        background: linear-gradient(135deg, #1e1b4b, #2e1065);
+        color: #e9d5ff;
+        border: 1px solid var(--secondary-glow);
+        border-top-right-radius: 4px;
+      }
+
+      .banter-conclusion {
+        text-align: center;
+        font-size: 18px;
+        font-weight: 700;
+        font-style: italic;
+        color: #fbbf24;
+        margin-top: 15px;
+        letter-spacing: 0.5px;
+        text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+      }
+
+      /* ================= BANTER CHAT SUBFOOTER EFFECT ================= */
+      .subfooter-tribute {
+        text-align: center;
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px dashed var(--border-color);
+      }
+      .badge-otl {
+        display: inline-block;
+        background: #0f172a;
+        border: 1px solid var(--border-color);
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-family: monospace;
         font-weight: bold;
-        text-shadow: 1px 1px 3px black;
+        font-size: 13px;
+        color: #e2e8f0;
+        margin-bottom: 12px;
+      }
+      .emojis-bow {
+        font-size: 24px;
+        letter-spacing: 8px;
+        margin-bottom: 8px;
+        filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
+      }
+      .subtext-bow {
+        font-size: 12px;
+        font-style: italic;
+        color: #c084fc;
       }
 
-      .hidden-section {
-        display: none;
+      /* ================= SURAT ANIMASI INTERAKTIF ================= */
+      .envelope-section {
+        max-w: 650px;
+        margin: 0 auto 60px auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: center;
       }
 
-      .video-wrapper {
-        max-width: 640px;
-        width: 50%;
-        margin: auto;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      .envelope-wrapper {
+        position: relative;
+        width: 300px;
+        height: 200px;
+        background-color: #334155;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+        transition: transform 0.3s ease;
       }
 
-      video {
-        width: 100%;
-        height: auto;
-        display: block;
+      .envelope-wrapper:hover {
+        transform: translateY(-5px);
+      }
+
+      .envelope-flap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+        border-left: 150px solid transparent;
+        border-right: 150px solid transparent;
+        border-top: 100px solid #475569;
+        transform-origin: top;
+        transition: transform 0.4s ease 0.2s, z-index 0s linear 0.4s;
+        z-index: 4;
+      }
+
+      .envelope-front {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+        border-left: 150px solid #1e293b;
+        border-right: 150px solid #1e293b;
+        border-top: 100px solid transparent;
+        border-bottom: 100px solid #1e293b;
+        border-radius: 0 0 8px 8px;
+        z-index: 5;
+      }
+
+      .letter-paper {
+        position: absolute;
+        bottom: 10px;
+        left: 15px;
+        width: 270px;
+        height: 170px;
+        background-color: #ffffff;
+        border-radius: 6px;
+        padding: 20px 15px;
+        color: #1e293b;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.5s ease 0.4s, height 0.5s ease 0.4s,
+          bottom 0.5s ease 0.4s;
+        z-index: 3;
+        overflow-y: auto;
+      }
+
+      .letter-text {
+        font-size: 12px;
+        line-height: 1.6;
+        white-space: pre-line;
+        font-weight: 500;
+      }
+
+      .letter-signature {
+        margin-top: 15px;
+        text-align: right;
+        font-size: 11px;
+        color: #64748b;
+        font-style: italic;
+      }
+
+      .envelope-wrapper.open .envelope-flap {
+        transform: rotateX(180deg);
+        z-index: 2;
+        transition: transform 0.4s ease, z-index 0s linear 0s;
+      }
+
+      .envelope-wrapper.open .letter-paper {
+        bottom: 100px;
+        height: 340px;
+        transform: scale(1.08);
+        z-index: 6;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      }
+
+      .envelope-hint {
+        text-align: center;
+        font-size: 13px;
+        color: var(--accent-amber);
+        margin-top: 15px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      /* ================= THE TOAST ================= */
+      .toast-box {
+        text-align: center;
+        padding: 48px 24px;
+        background: rgba(30, 41, 59, 0.2);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        border-radius: 24px;
+        max-w: 650px;
+        margin: 0 auto;
+      }
+      .toast-box h3 {
+        font-size: 24px;
+        margin-bottom: 12px;
+      }
+      .toast-box p {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 24px;
+      }
+
+      .btn-toast {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: linear-gradient(to right, #f472b6, #a855f7);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.2);
+        transition: transform 0.1s ease;
+      }
+      .btn-toast:active {
+        transform: scale(0.95);
+      }
+      /* ================= MUSIC CONTROL WIDGET (POJOK KANAN ATAS) ================= */
+      .music-widget {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid var(--border-color, #334155);
+        padding: 10px 14px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 1000;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+        opacity: 0;
+        transform: translateY(-10px);
+        pointer-events: none;
+      }
+
+      .music-widget.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .btn-music-toggle {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+        transition: transform 0.2s;
+      }
+      .btn-music-toggle:active {
+        transform: scale(0.9);
+      }
+
+      .volume-container {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .volume-slider {
+        width: 70px;
+        accent-color: #6366f1;
+        cursor: pointer;
+        height: 4px;
+        border-radius: 999px;
       }
     </style>
   </head>
-  <body
-    class="flex flex-col items-center justify-start min-h-screen bg-gradient-to-br from-pink-300 to-purple-500 text-white text-center"
-  >
-    <div id="welcome" class="space-y-6 mt-20">
+  <body class="no-scroll">
+    <!-- HAPUS PLAYER YOUTUBE SEBELUMNYA, GANTI DENGAN KODE INI -->
+    <!-- Player Audio Lokal Tersembunyi -->
+    <audio id="localAudioPlayer" loop prefetch>
+      <source src="audio/up.mp3" type="audio/mpeg" />
+      Browser kamu tidak mendukung pemutar audio lokal.
+    </audio>
+
+    <div id="musicWidget" class="music-widget">
       <button
-        id="startBtn"
-        class="mt-4 px-8 py-3 bg-white text-purple-600 font-bold rounded-lg text-lg shadow-lg hover:scale-105 transform transition"
+        id="musicToggleBtn"
+        class="btn-music-toggle"
+        onclick="toggleMusic()"
       >
-        Apa nih..?
+        🔊
       </button>
+      <div class="volume-container">
+        <input
+          type="range"
+          id="volumeSlider"
+          class="volume-slider"
+          min="0"
+          max="100"
+          value="40"
+          oninput="changeVolume(this.value)"
+        />
+      </div>
     </div>
+    <section id="gateScreen">
+      <div class="lock-container">
+        <div class="badge-delayed">
+          ⚠️ Peringatan: Keterlambatan Pengiriman Kado
+        </div>
+        <h1 class="title-gradient">The gift has successfully landed!</h1>
+        <p class="desc-text">Benar atas nama Tisha Rafifah Khairunnisa?</p>
 
-    <div
-      id="birthdayMessage"
-      class="hidden fade-in flex flex-col items-center space-y-8 p-8 bg-white bg-opacity-10 backdrop-blur-md rounded-3xl shadow-2xl max-w-2xl mt-10"
-    >
-      <div>
-        <h1 class="text-5xl font-extrabold mb-4">Happy Birthday Mbak Tisha!</h1>
-        <p class="text-lg">Anjay udah kepala 2 rek! sehat selalu mbak...</p>
+        <div>
+          <input
+            type="password"
+            id="secretKey"
+            placeholder="Ketik 'inggih'"
+            class="input-password"
+          />
+          <button onclick="unlockGateway()" class="btn-primary">Open</button>
+          <p id="errorMessage" class="error-message hidden">
+            Dih saha eta? macan? 😂
+          </p>
+        </div>
       </div>
+    </section>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <img
-          src="photo-7.jpg"
-          class="rounded-xl shadow-lg w-40 h-40 object-cover"
-        />
-        <img
-          src="photo-5.jpg"
-          class="rounded-xl shadow-lg w-40 h-40 object-cover"
-        />
-        <img
-          src="photo-6.jpg"
-          class="rounded-xl shadow-lg w-40 h-40 object-cover"
-        />
-      </div>
-
-      <div class="bg-slate-200 mx-2 md:mx-20 p-2 rounded-lg shadow-2xl">
-        <h3 class="font-bold md:text-lg">Quotes Tisha</h3>
-        <p class="md:text-lg font-semibold">
-          "Semakin nambah umur , semakin cepet mati ~ Tisha 2020"
+    <section id="pandoraScreen" class="hidden">
+      <div class="lock-container" style="max-w: 450px">
+        <div
+          class="badge-delayed"
+          style="
+            color: #c084fc;
+            background: rgba(168, 85, 247, 0.1);
+            border-color: rgba(168, 85, 247, 0.3);
+          "
+        >
+          🎁 Kado Tertunda Ditemukan!
+        </div>
+        <h2
+          class="title-gradient"
+          style="background: linear-gradient(to right, #f472b6, #a855f7)"
+        >
+          Pandora Box
+        </h2>
+        <p class="desc-text" style="margin-bottom: 10px">
+          Ketuk kotak di bawah ini untuk membukannya!
         </p>
-      </div>
-
-      <p>Scroll... sampai bawah - kalau mau sih ✨✨</p>
-    </div>
-
-    <!-- Progress Bar Section -->
-    <div id="scrollSection" class="progress-container mt-10 hidden">
-      <div class="progress-bar-wrapper">
-        <div class="progress-bar">
-          <div id="progressFill" class="progress-bar-fill"></div>
-        </div>
-        <div id="progressLabel" class="progress-label">-> semangat banget</div>
-      </div>
-    </div>
-
-    <!-- Extra Content Section -->
-    <div
-      id="extraContent"
-      class="hidden-section text-white text-center space-y-6 py-12 px-4"
-    >
-      <p class="pt-28 text-xl">capek yah.. maaf maaf</p>
-      <div class="video-wrapper">
-        <video
-          src="./lv_0_20240807204041.mp4"
-          loop
-          playsinline
-          controls
-        ></video>
-      </div>
-
-      <div class="">
-        <h3>
-          Sepurane asline gak terlalu mood gawe buat sih, dadi ne hasil e kurang
-          maksimal
-        </h3>
-
-        <h4>
-          So i want say thank you for chatGpt, because he is done to write code
-          to give surprise to awkm tish
-        </h4>
-
-        <br />
-        <h5>Eh tish ada salam nih buat kamu dari chat chatGpt</h5>
 
         <div
-          class="mt-16 p-6 bg-white bg-opacity-10 backdrop-blur-lg rounded-xl shadow-lg max-w-xl mx-auto text-white text-center border border-white/30 animate-fade-in"
+          id="pandoraBox"
+          class="pandora-box-container"
+          onclick="tapPandoraBox()"
         >
-          <h2 class="text-2xl font-bold mb-4 text-pink-100">Hai Tisha! 🎉</h2>
-          <p class="text-base leading-relaxed">
-            Selamat ulang tahun yaa!<br />
-            Semoga hari-harimu selalu dipenuhi kebahagiaan, tawa, dan berkah
-            yang nggak ada habisnya.<br />
-            Tetap jadi pribadi yang ceria, kuat, dan penuh semangat seperti
-            sekarang.<br />
-            Kamu beruntung banget punya teman seperti
-            <span class="font-semibold text-pink-200">Ilham</span> yang niat
-            banget bikin surprise kayak gini!
-          </p>
-          <p class="mt-4 text-sm italic text-purple-200">
-            Dari aku — yang bantuin di balik layar website ini 😄<br />
-            Salam hangat dari ChatGPT! 🤗✨
-          </p>
+          📦
+        </div>
+        <div id="clickCountLabel" class="click-counter">Ketukan: 0 / 5</div>
+
+        <div id="wishOutputContainer"></div>
+      </div>
+    </section>
+
+    <div id="introScreen" class="intro-container hidden">
+      <div id="introTextElement" class="intro-text"></div>
+    </div>
+
+    <main id="mainContent" class="hidden">
+      <header class="header-estetik">
+        <h2 id="mainTitle">Happy 20th Birthday<br />Tisha! ✨</h2>
+        <p
+          id="mainDesc"
+          class="desc-text"
+          style="max-width: 540px; font-size: 16px; line-height: 1.6"
+        ></p>
+        <div id="scrollIndicator" class="scroll-indicator">
+          <span>Scroll Kebawah</span><br />↓
+        </div>
+      </header>
+
+      <h3
+        class="section-title"
+        style="max-w: 1000px; margin: 0 auto 24px auto; padding: 0 20px"
+      >
+        📁 Galeri
+      </h3>
+
+      <section class="marquee-container">
+        <div class="marquee-wrapper track-left">
+          <div class="marquee-group">
+            <div class="marquee-item">
+              <img src="photo-1.png" class="marquee-img" alt="Momen 1" />
+              <!-- <div class="marquee-body">
+                <h4>Nongkrong Gabut</h4>
+                <p>Kehujanan bareng pas neduh nonton kucing berantem.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-5.jpg" class="marquee-img" alt="Momen 2" />
+              <!-- <div class="marquee-body">
+                <h4>H-1 Ujian Akhir</h4>
+                <p>Bukannya belajar malah mabar seru sampai subuh.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-10.jpg" class="marquee-img" alt="Momen 3" />
+              <!-- <div class="marquee-body">
+                <h4>Hari Perpisahan</h4>
+                <p>Foto terakhir sebelum kamu terbang kuliah ke luar negeri.</p>
+              </div> -->
+            </div>
+          </div>
+          <div class="marquee-group">
+            <div class="marquee-item">
+              <img src="photo-7.jpg" class="marquee-img" alt="Momen 1" />
+              <!-- <div class="marquee-body">
+                <h4>Nongkrong Gabut</h4>
+                <p>Kehujanan bareng pas neduh nonton kucing berantem.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-8.jpg" class="marquee-img" alt="Momen 2" />
+              <!-- <div class="marquee-body">
+                <h4>H-1 Ujian Akhir</h4>
+                <p>Bukannya belajar malah mabar seru sampai subuh.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-11.jpg" class="marquee-img" alt="Momen 3" />
+              <!-- <div class="marquee-body">
+                <h4>Hari Perpisahan</h4>
+                <p>Foto terakhir sebelum kamu terbang kuliah ke luar negeri.</p>
+              </div> -->
+            </div>
+          </div>
+          <div class="marquee-group">
+            <div class="marquee-item">
+              <img src="photo-9(1).jpg" class="marquee-img" alt="Momen 1" />
+              <!-- <div class="marquee-body">
+                <h4>Nongkrong Gabut</h4>
+                <p>Kehujanan bareng pas neduh nonton kucing berantem.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-1.png" class="marquee-img" alt="Momen 2" />
+              <!-- <div class="marquee-body">
+                <h4>H-1 Ujian Akhir</h4>
+                <p>Bukannya belajar malah mabar seru sampai subuh.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-8.jpg" class="marquee-img" alt="Momen 3" />
+              <!-- <div class="marquee-body">
+                <h4>Hari Perpisahan</h4>
+                <p>Foto terakhir sebelum kamu terbang kuliah ke luar negeri.</p>
+              </div> -->
+            </div>
+          </div>
         </div>
 
-        <div
-          class="mt-16 p-6 bg-white bg-opacity-10 backdrop-blur-lg rounded-xl shadow-lg max-w-xl mx-auto text-white text-center border border-white/30 animate-fade-in"
-        >
-          <p class="text-base leading-relaxed">
-            Sekali lagi happy birthday ya mbak Tish <br />
-            semoga ilmu. umur dan hal baik yang sudah dilakukan dan didapatkan
-            bisa barokah dan bermanfaat buat semuanya <br />
-          </p>
+        <div class="marquee-wrapper track-right">
+          <div class="marquee-group">
+            <div class="marquee-item">
+              <img src="photo-11.jpg" class="marquee-img" alt="Momen 4" />
+              <!-- <div class="marquee-body">
+                <h4>Studio Vibe</h4>
+                <p>Waktu nyobain dengerin kumpulan audio kiriman anak-anak.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-10.jpg" class="marquee-img" alt="Momen 5" />
+              <!-- <div class="marquee-body">
+                <h4>Acara Syukuran</h4>
+                <p>Makan-makan besar sebelum pembagian kelompok waktu itu.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-6.jpg" class="marquee-img" alt="Momen 6" />
+              <!-- <div class="marquee-body">
+                <h4>Keliling Kota</h4>
+                <p>Motoran malam-malam nyari angin sekalian nyari makan.</p>
+              </div> -->
+            </div>
+          </div>
+          <div class="marquee-group">
+            <div class="marquee-item">
+              <img src="photo-7.jpg" class="marquee-img" alt="Momen 4" />
+              <!-- <div class="marquee-body">
+                <h4>Studio Vibe</h4>
+                <p>Waktu nyobain dengerin kumpulan audio kiriman anak-anak.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-1.png" class="marquee-img" alt="Momen 5" />
+              <!-- <div class="marquee-body">
+                <h4>Acara Syukuran</h4>
+                <p>Makan-makan besar sebelum pembagian kelompok waktu itu.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-11.jpg" class="marquee-img" alt="Momen 6" />
+              <!-- <div class="marquee-body">
+                <h4>Keliling Kota</h4>
+                <p>Motoran malam-malam nyari angin sekalian nyari makan.</p>
+              </div> -->
+            </div>
+          </div>
+          <div class="marquee-group">
+            <div class="marquee-item">
+              <img src="photo-5.jpg" class="marquee-img" alt="Momen 4" />
+              <!-- <div class="marquee-body">
+                <h4>Studio Vibe</h4>
+                <p>Waktu nyobain dengerin kumpulan audio kiriman anak-anak.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-9(1).jpg" class="marquee-img" alt="Momen 5" />
+              <!-- <div class="marquee-body">
+                <h4>Acara Syukuran</h4>
+                <p>Makan-makan besar sebelum pembagian kelompok waktu itu.</p>
+              </div> -->
+            </div>
+            <div class="marquee-item">
+              <img src="photo-5.jpg" class="marquee-img" alt="Momen 6" />
+              <!-- <div class="marquee-body">
+                <h4>Keliling Kota</h4>
+                <p>Motoran malam-malam nyari angin sekalian nyari makan.</p>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="main-section">
+        <h3 class="section-title purple">🎮 Kado Challenge: Kalahkan Musuh!</h3>
+
+        <div class="game-wrapper">
+          <div id="gameInitArea">
+            <p class="desc-text" style="font-size: 15px; margin-bottom: 20px">
+              Mau main game? Anggap aja aku musuhnya.
+            </p>
+            <button class="btn-game-trigger" onclick="setupAndStartGame()">
+              Mulai Pertempuran! 🚀
+            </button>
+          </div>
+
+          <div id="gameActiveArea" class="hidden">
+            <div class="game-container" id="gameArena">
+              <div class="boss-ui">
+                <div class="boss-name">
+                  💢 Rifki (HP: <span id="bossHpText">100</span>%)
+                </div>
+                <div class="hp-bar-bg">
+                  <div id="bossHpBar" class="hp-bar-fill"></div>
+                </div>
+              </div>
+
+              <div id="enemyBoss" class="game-actor">👾</div>
+              <div id="playerShip" class="game-actor">🚀</div>
+
+              <div id="gameOverScreen" class="game-over-overlay hidden">
+                <h4
+                  id="gameResultTitle"
+                  style="font-size: 24px; color: #fbbf24; margin-bottom: 8px"
+                >
+                  GAME OVER
+                </h4>
+                <p
+                  id="gameResultDesc"
+                  class="desc-text"
+                  style="margin-bottom: 16px"
+                >
+                  Musuh berhasil ditaklukan!
+                </p>
+                <button
+                  class="btn-primary"
+                  style="max-w: 160px; width: auto; padding: 10px 20px"
+                  onclick="resetMiniGame()"
+                >
+                  Main Lagi 🔄
+                </button>
+              </div>
+            </div>
+
+            <div class="game-controls">
+              <button class="btn-ctrl" onclick="movePlayer(-25)">◀ Kiri</button>
+              <button
+                class="btn-ctrl"
+                onclick="fireLaser()"
+                style="background: #dc2626; border-color: #f87171"
+              >
+                TEMBAK 💥
+              </button>
+              <button class="btn-ctrl" onclick="movePlayer(25)">Kanan ▶</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="banter-section">
+        <div class="banter-container">
+          <div class="banter-row left">
+            <div class="banter-avatar">😅</div>
+            <div class="banter-bubble">
+              "Udah gak cocok kalau dipanggil tante"
+            </div>
+          </div>
+
+          <div class="banter-row right">
+            <div class="banter-avatar">😁</div>
+            <div class="banter-bubble">
+              "Udah gak cocok juga dipanggil mbak"
+            </div>
+          </div>
+
+          <div class="banter-conclusion">"Hmm baiklah tuan putri 👑"</div>
+          <!-- 
+          <div class="subfooter-tribute">
+            <div class="badge-otl">🙇 OTL 🙇</div>
+            <div class="emojis-bow">🙇‍♂️ 🙇‍♀️ 🙇‍♂️</div>
+            <div class="subtext-bow">
+              *ampun tuann putriii, hamba nunduk hormat* 😂🙏
+            </div>
+          </div> -->
+        </div>
+      </section>
+
+      <section class="envelope-section">
+        <div>
+          <div
+            class="envelope-wrapper"
+            id="envelopeBox"
+            onclick="toggleEnvelope()"
+          >
+            <div class="envelope-flap"></div>
+            <div class="letter-paper">
+              <div class="letter-text">
+                Hai Tisha 👋 (HAHAHA terlalu kaku) 😂😂 <br />Apa kabar Tisha?
+                Oh iya, kan udah ganti panggilan, jadi Tuan Putri --
+                <br /><br />Doa ku <br />Aku berharap apa yang kamu cita - cita
+                bisa berhasil, sehat selalu, bisa menyelesaikan studi dengan
+                baik, bisa didekatkan dengan teman - teman yang baik, orang -
+                orang baik, lingkungan yang baik. <br /><br />
+                Jangan lupa sholat nya. Jaga diri baik baik. hati - hati kalau
+                ketemu orang baru. Jaga Lisan dan Perbuatan 👍.
+                <br /><br />Sukses terus ya... ntar kalo lagi di Malang, Jalan
+                jalan kuy 😁, kalau mau sih kalau gak mau juga ga apa apa 😄
+              </div>
+              <div class="letter-signature">salam dari Lutfika</div>
+            </div>
+            <div class="envelope-front"></div>
+          </div>
           <br />
-          <h2>Terus tertawa, Bersyukur and Good Luck Always</h2>
-          <p class="mt-4 text-sm italic text-purple-200">Rifki Ilham Lutfika</p>
+          <div class="envelope-hint" id="envelopeHint">
+            ✉️ Ketuk surat untuk membuka pesan ...
+          </div>
         </div>
+      </section>
 
-        <div
-          class="mt-16 p-6 bg-white bg-opacity-10 backdrop-blur-lg rounded-xl shadow-lg max-w-xl mx-auto text-white text-center border border-white/30 animate-fade-in"
-        >
-          <p class="text-base leading-relaxed">
-            Kudu ne iki onok video ne tapi gak sempet, semoga mari buka iki awkm
-            guyu seh (harapan ku iku tok 🤣🤣🤣). <br />
-            Lek ada yang kurang mengenakan mohon maaf ya...
-          </p>
-        </div>
-
-        <div
-          class="mt-16 p-6 bg-white bg-opacity-10 backdrop-blur-lg rounded-xl shadow-lg max-w-xl mx-auto text-white text-center border border-white/30 animate-fade-in"
-        >
-          <p class="text-base leading-relaxed">Sedikit pantun dari aku</p>
-          <h3 class="mt-5">
-            Raya tiba membeli baju <br />
-            Dipakai nya dipagi hari
-            <br />Semoga Tisha sekeluarga sehat selalu <br />
-            serta bisa melaksanakan umrah dan haji
-          </h3>
-        </div>
-
-        <p class="mt-5 italic font-semibold">See You.. and Assalamualaikum..</p>
-      </div>
-    </div>
-
-    <!-- Musik -->
-    <audio id="bg-music" src="audio/up.mp3" loop></audio>
+      <section class="toast-box" style="margin-top: 200px">
+        <h3>Mari Bersulang! ☕</h3>
+        <!-- <p>
+        </p> -->
+        <button onclick="triggerConfetti()" class="btn-toast">
+          🎉 Bersulang!
+        </button>
+      </section>
+    </main>
 
     <script>
-      const startBtn = document.getElementById("startBtn");
-      const welcome = document.getElementById("welcome");
-      const birthdayMessage = document.getElementById("birthdayMessage");
-      const audio = document.getElementById("bg-music");
-      const quoteBox = document.getElementById("quoteBox");
-      const scrollSection = document.getElementById("scrollSection");
-      const extraContent = document.getElementById("extraContent");
-      const progressFill = document.getElementById("progressFill");
-      const progressLabel = document.getElementById("progressLabel");
+      // ================= SCRIPT BARU UNTUK AUDIO LOKAL =================
+      let audioPlayer = document.getElementById("localAudioPlayer");
+      let isMusicPlaying = false;
 
-      const labels = [
-        "",
-        "-> Semangat banget kek nya",
-        "-> Seng sabar nggeh",
-        "-> dikit lagi",
-        "-> dikit lagi kek nya",
-        "-> kok belum sampai ya...",
-        "-> hmmm...",
-        "-> please dikit lagi ituh",
-        "-> kepo banget kek nya awkm tish",
-        "-> ...",
-        "-> yuhu... akhirnya dah sampai",
-      ];
+      // Fungsi memutar musik otomatis saat tombol diklik (Dipanggil di unlockGateway)
+      function playMusicWithFade() {
+        // Definisikan ulang elemen untuk memastikan script menangkap tag audio
+        audioPlayer = document.getElementById("localAudioPlayer");
+        if (!audioPlayer) return;
 
-      startBtn.addEventListener("click", () => {
-        welcome.classList.add("hidden");
-        birthdayMessage.classList.remove("hidden");
+        // Set volume awal ke 40%
+        audioPlayer.volume = 0.4;
 
-        setTimeout(() => {
-          birthdayMessage.classList.add("show");
-        }, 100);
-
-        scrollSection.classList.remove("hidden");
-
-        audio.play().catch((err) => {
-          console.warn("Autoplay gagal:", err);
-        });
-
-        fetchQuote();
-      });
-
-      function fetchQuote() {
-        fetch("https://api.quotable.io/random")
-          .then((res) => res.json())
-          .then((data) => {
-            const quote = data.content;
-            const author = data.author;
-            quoteBox.innerText = `"${quote}"\n- ${author}`;
+        audioPlayer
+          .play()
+          .then(() => {
+            isMusicPlaying = true;
+            document.getElementById("musicToggleBtn").innerText = "🔊";
+            document.getElementById("musicWidget").classList.add("show");
           })
-          .catch(() => {
-            quoteBox.innerText = "Gagal memuat quote. Coba refresh ya.";
+          .catch((error) => {
+            console.log(
+              "Autoplay diblokir oleh browser, menunggu interaksi pengguna: ",
+              error
+            );
+            // Jika browser sangat ketat, widget tetap muncul agar user bisa klik manual
+            document.getElementById("musicWidget").classList.add("show");
           });
       }
 
-      window.addEventListener("scroll", () => {
-        const rect = scrollSection.getBoundingClientRect();
-        const sectionTop = window.innerHeight;
-        const sectionHeight = scrollSection.offsetHeight;
+      // Fungsi Tombol On/Off Musik di Pojok Kanan Atas
+      function toggleMusic() {
+        audioPlayer = document.getElementById("localAudioPlayer");
+        if (!audioPlayer) return;
 
-        // Hanya hitung jika scroll sudah mencapai bagian scrollSection
-        if (rect.top < sectionTop && rect.bottom > 0) {
-          const scrollY = Math.min(sectionHeight, sectionTop - rect.top);
-          const scrollPercent = Math.min(100, (scrollY / sectionHeight) * 100);
+        const btn = document.getElementById("musicToggleBtn");
+        if (isMusicPlaying) {
+          audioPlayer.pause();
+          isMusicPlaying = false;
+          btn.innerText = "🔇";
+        } else {
+          audioPlayer.play();
+          isMusicPlaying = true;
+          btn.innerText = "🔊";
+        }
+      }
 
-          progressFill.style.width = scrollPercent + "%";
+      // Fungsi Slider Volume Kontrol
+      function changeVolume(val) {
+        audioPlayer = document.getElementById("localAudioPlayer");
+        if (!audioPlayer) return;
 
-          if (scrollPercent > 95) {
-            progressLabel.innerText = labels[10];
-          } else if (scrollPercent > 90) {
-            progressLabel.innerText = labels[9];
-          } else if (scrollPercent > 85) {
-            progressLabel.innerText = labels[8];
-          } else if (scrollPercent > 80) {
-            progressLabel.innerText = labels[7];
-          } else if (scrollPercent > 70) {
-            progressLabel.innerText = labels[6];
-          } else if (scrollPercent > 60) {
-            progressLabel.innerText = labels[5];
-          } else if (scrollPercent > 50) {
-            progressLabel.innerText = labels[4];
-          } else if (scrollPercent > 40) {
-            progressLabel.innerText = labels[3];
-          } else if (scrollPercent > 30) {
-            progressLabel.innerText = labels[2];
-          } else if (scrollPercent > 10) {
-            progressLabel.innerText = labels[1];
+        // Tag audio HTML5 menerima nilai volume dari nilai 0.0 sampai 1.0
+        const calculatedVolume = val / 100;
+        audioPlayer.volume = calculatedVolume;
+
+        const btn = document.getElementById("musicToggleBtn");
+        if (val == 0) {
+          btn.innerText = "🔇";
+          isMusicPlaying = false;
+        } else {
+          btn.innerText = "🔊";
+          isMusicPlaying = true;
+        }
+      }
+
+      const listDoa = [
+        "🎓 Semoga kuliahmu di sana lancar dan lulus dengan hasil terbaik!",
+        "✨ Semoga kamu didekatkan dengan orang - orang baik",
+        "💪 Dilancarkan rezekinya, dimudahkan segala urusan dan tugas-tugas kuliahnya!",
+        "🕋 Semoga kamu sekeluarga bisa umrah dan haji",
+        "🔥 BOOM! Gak sabar nunggu kamu pulang bawa gelar. Kapsul memori TERBUKA!",
+      ];
+
+      const introTexts = [
+        "Tisha",
+        "Maaf ya..",
+        "Jarang nanyain kabar",
+        "Jarang ngirim pesan",
+        "Apapun itu semoga sehat selalu ya... 😊",
+      ];
+
+      let clickCount = 0;
+
+      function unlockGateway() {
+        const input = document
+          .getElementById("secretKey")
+          .value.trim()
+          .toLowerCase();
+        const gateScreen = document.getElementById("gateScreen");
+        const pandoraScreen = document.getElementById("pandoraScreen");
+        const errorMessage = document.getElementById("errorMessage");
+
+        const correctPassword = "inggih";
+
+        if (input === correctPassword) {
+          // SCRIPT BARU: Memutar musik otomatis ketika tombol diklik
+          playMusicWithFade();
+
+          gateScreen.style.opacity = "0";
+          gateScreen.style.transform = "scale(0.95)";
+          errorMessage.classList.add("hidden");
+
+          setTimeout(() => {
+            gateScreen.classList.add("hidden");
+            pandoraScreen.classList.remove("hidden");
+          }, 500);
+        } else {
+          errorMessage.classList.remove("hidden");
+          document.getElementById("secretKey").classList.add("animate-shake");
+          setTimeout(() => {
+            document
+              .getElementById("secretKey")
+              .classList.remove("animate-shake");
+          }, 300);
+        }
+      }
+
+      function tapPandoraBox() {
+        if (clickCount >= 5) return;
+
+        const box = document.getElementById("pandoraBox");
+        const counterLabel = document.getElementById("clickCountLabel");
+        const wishContainer = document.getElementById("wishOutputContainer");
+
+        box.classList.remove("box-tap");
+        void box.offsetWidth;
+        box.classList.add("box-tap");
+
+        wishContainer.innerHTML = `<div class="wish-bubble">${listDoa[clickCount]}</div>`;
+
+        clickCount++;
+        counterLabel.innerText = `Ketukan: ${clickCount} / 5`;
+
+        if (clickCount === 2) box.innerText = "📦";
+        if (clickCount === 4) box.innerText = "🔓";
+
+        confetti({ particleCount: 15, spread: 30, origin: { y: 0.6 } });
+
+        if (clickCount === 5) {
+          box.innerText = "💥";
+          setTimeout(() => {
+            const pandoraScreen = document.getElementById("pandoraScreen");
+            pandoraScreen.style.opacity = "0";
+            pandoraScreen.style.transform = "scale(0.9)";
+
+            setTimeout(() => {
+              pandoraScreen.classList.add("hidden");
+              startCinematicIntro();
+            }, 500);
+          }, 1200);
+        }
+      }
+
+      function startCinematicIntro() {
+        const introScreen = document.getElementById("introScreen");
+        const introTextElement = document.getElementById("introTextElement");
+        introScreen.classList.remove("hidden");
+
+        let currentTextIndex = 0;
+
+        function runSequence() {
+          if (currentTextIndex < introTexts.length) {
+            introTextElement.innerText = introTexts[currentTextIndex];
+            introTextElement.classList.add("show");
+
+            setTimeout(() => {
+              introTextElement.classList.remove("show");
+              setTimeout(() => {
+                currentTextIndex++;
+                runSequence();
+              }, 1000);
+            }, 2500);
           } else {
-            progressLabel.innerText = labels[0];
-          }
+            setTimeout(() => {
+              introScreen.style.opacity = "0";
+              introScreen.style.transition = "opacity 1s ease";
 
-          if (scrollPercent >= 99) {
-            extraContent.classList.remove("hidden-section");
+              setTimeout(() => {
+                introScreen.classList.add("hidden");
+                revealMainContent();
+              }, 1000);
+            }, 3000);
           }
         }
+        runSequence();
+      }
+
+      function revealMainContent() {
+        const mainContent = document.getElementById("mainContent");
+        const mainTitle = document.getElementById("mainTitle");
+        const mainDesc = document.getElementById("mainDesc");
+        const scrollIndicator = document.getElementById("scrollIndicator");
+
+        mainContent.classList.remove("hidden");
+
+        setTimeout(() => {
+          mainTitle.classList.add("reveal");
+          mainDesc.classList.add("reveal");
+          scrollIndicator.classList.add("reveal");
+          triggerBigConfetti();
+          document.body.classList.remove("no-scroll");
+        }, 100);
+      }
+
+      /* ================= LOGIKA INTERAKTIF TOGGLE SURAT ================= */
+      function toggleEnvelope() {
+        const envelope = document.getElementById("envelopeBox");
+        const hint = document.getElementById("envelopeHint");
+
+        if (envelope.classList.contains("open")) {
+          envelope.classList.remove("open");
+          hint.innerText = "✉️ Ketuk surat untuk membuka pesan rahasia...";
+        } else {
+          envelope.classList.add("open");
+          hint.innerText = "✨ Ketuk surat kembali untuk menutup...";
+          confetti({
+            particleCount: 30,
+            angle: 90,
+            spread: 45,
+            origin: { y: 0.8 },
+          });
+        }
+      }
+
+      /* ================= RETRO MINI GAME JAVASCRIPT LOGIC ================= */
+      let bossHp = 100;
+      let playerX = 230;
+      let bossX = 230;
+      let bossDirection = 1;
+      let gameLoopInterval, bossMoveInterval;
+      let isGameActive = false;
+
+      function setupAndStartGame() {
+        document.getElementById("gameInitArea").classList.add("hidden");
+        document.getElementById("gameActiveArea").classList.remove("hidden");
+        resetMiniGame();
+      }
+
+      function resetMiniGame() {
+        bossHp = 100;
+        playerX = 230;
+        bossX = 230;
+        isGameActive = true;
+        document.getElementById("bossHpText").innerText = bossHp;
+        document.getElementById("bossHpBar").style.width = "100%";
+        document.getElementById("playerShip").style.left = playerX + "px";
+        document.getElementById("enemyBoss").style.left = bossX + "px";
+        document.getElementById("gameOverScreen").classList.add("hidden");
+
+        const oldLasers = document.querySelectorAll(".laser-beam");
+        oldLasers.forEach((l) => l.remove());
+
+        clearInterval(gameLoopInterval);
+        clearInterval(bossMoveInterval);
+
+        bossMoveInterval = setInterval(() => {
+          if (!isGameActive) return;
+          bossX += 6 * bossDirection;
+          if (bossX >= 460 || bossX <= 0) {
+            bossDirection *= -1;
+          }
+          document.getElementById("enemyBoss").style.left = bossX + "px";
+        }, 50);
+
+        gameLoopInterval = setInterval(() => {
+          if (!isGameActive) return;
+          const lasers = document.querySelectorAll(".laser-beam");
+          lasers.forEach((laser) => {
+            let currentTop = parseInt(laser.style.top);
+            currentTop -= 8;
+            if (currentTop < 0) {
+              laser.remove();
+            } else {
+              laser.style.top = currentTop + "px";
+              if (currentTop <= 70 && currentTop >= 40) {
+                let laserX = parseInt(laser.style.left);
+                if (Math.abs(laserX - bossX) <= 30) {
+                  laser.remove();
+                  damageBoss();
+                }
+              }
+            }
+          });
+        }, 20);
+      }
+
+      function movePlayer(offset) {
+        if (!isGameActive) return;
+        playerX += offset;
+        if (playerX < 0) playerX = 0;
+        if (playerX > 460) playerX = 460;
+        document.getElementById("playerShip").style.left = playerX + "px";
+      }
+
+      function fireLaser() {
+        if (!isGameActive) return;
+        const arena = document.getElementById("gameArena");
+        const laser = document.createElement("div");
+        laser.className = "laser-beam";
+        laser.style.left = playerX + 18 + "px";
+        laser.style.top = "320px";
+        arena.appendChild(laser);
+      }
+
+      function damageBoss() {
+        bossHp -= 10;
+        if (bossHp < 0) bossHp = 0;
+        document.getElementById("bossHpText").innerText = bossHp;
+        document.getElementById("bossHpBar").style.width = bossHp + "%";
+        const bossNode = document.getElementById("enemyBoss");
+        bossNode.style.filter = "brightness(3) drop-shadow(0 0 15px #ffffff)";
+        setTimeout(() => {
+          bossNode.style.filter = "drop-shadow(0 0 10px #ef4444)";
+        }, 100);
+        if (bossHp <= 0) {
+          endGame(true);
+        }
+      }
+
+      function endGame(isWin) {
+        isGameActive = false;
+        clearInterval(gameLoopInterval);
+        clearInterval(bossMoveInterval);
+        const screen = document.getElementById("gameOverScreen");
+        const title = document.getElementById("gameResultTitle");
+        const desc = document.getElementById("gameResultDesc");
+        if (isWin) {
+          title.innerText = "🏆 KAMU MENANG!";
+          title.style.color = "#4ade80";
+          desc.innerText =
+            "GG WP! Sesuai prediksi, musuhmu ini emang gampang diruntuhin!";
+          triggerBigConfetti();
+        }
+        screen.classList.remove("hidden");
+      }
+
+      window.addEventListener("keydown", (e) => {
+        if (!isGameActive) return;
+        if (e.key === "ArrowLeft") movePlayer(-25);
+        if (e.key === "ArrowRight") movePlayer(25);
+        if (e.key === " " || e.code === "Space") {
+          e.preventDefault();
+          fireLaser();
+        }
       });
+
+      function triggerConfetti() {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      }
+      function triggerBigConfetti() {
+        var duration = 3.5 * 1000;
+        var end = Date.now() + duration;
+        (function frame() {
+          confetti({
+            particleCount: 4,
+            angle: 60,
+            spread: 60,
+            origin: { x: 0, y: 0.7 },
+            colors: ["#818cf8", "#f472b6", "#a855f7"],
+          });
+          confetti({
+            particleCount: 4,
+            angle: 120,
+            spread: 60,
+            origin: { x: 1, y: 0.7 },
+            colors: ["#818cf8", "#f472b6", "#a855f7"],
+          });
+          if (Date.now() < end) {
+            requestAnimationFrame(frame);
+          }
+        })();
+      }
     </script>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
   </body>
 </html>
